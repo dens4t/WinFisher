@@ -1,0 +1,27 @@
+name: Build WinFisher.exe
+
+on:
+  push:
+    branches: [ "main", "master" ]
+  workflow_dispatch:  # manual trigger via GitHub UI
+
+jobs:
+  build:
+    runs-on: windows-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Add MSBuild to PATH
+        uses: microsoft/setup-msbuild@v2
+
+      - name: Build Release (x64)
+        run: |
+          msbuild WinFisher.sln /p:Configuration=Release /p:Platform="Any CPU" /p:TargetFrameworkVersion=v4.5.1
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: WinFisher-x64-Release
+          path: WinFisher/bin/Release/
